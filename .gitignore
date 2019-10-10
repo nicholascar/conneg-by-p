@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+*/*.pyc
+*.pyo
+
+# PyCharm
+/.idea/
+/.vscode/
+
+# Mac
+.DS_Store
+
+#Dolphin
+.directory
+
+# log files
+*.log
+
+# PyPI distribution
+build/
+dist/
+*.egg
+*.egg-info/
+
+# Virtualenv
+/venv/
+
+# generated rofr.ttl
+rofr.ttl
+
+# the config
+_config/__init__.py
+
