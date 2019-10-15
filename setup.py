@@ -17,17 +17,17 @@ with open_local(['README.rst']) as readme:
 with open_local(['requirements.txt']) as req:
     install_requires = req.read().split("\n")
 
-    version = '0.1'
+version = '0.2'
 
 setup(
-    name='conneg-by-p',
-    packages=['conneg-by-p'],
+    name='connegp',
+    packages=['connegp'],
     version=version,
-    description='This small library module assists with tasks related to `Content Negotiation by Profile',
+    description='This small library module assists with tasks related to Content Negotiation by Profile',
     author='Nicholas Car',
     author_email='nicholas.car@surroundaustralia.com',
-    url='https://github.com/nicholascar/conneg-by-p',
-    download_url='https://github.com/nicholascar/conneg-by-p/archive/v{:s}.tar.gz'.format(version),
+    url='https://github.com/nicholascar/connegp',
+    download_url='https://github.com/nicholascar/connegp/archive/v{:s}.tar.gz'.format(version),
     license='LICENSE',
     keywords=['Content Negotiation', 'HTTP', 'Linked Data', 'Semantic Web', 'Python', 'API', 'RDF'],
     long_description=long_description,
@@ -48,9 +48,10 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     project_urls={
-        'Bug Reports':'https://github.com/nicholascar/conneg-by-p/issues',
-        'Source': 'https://github.com/nicholascar/conneg-by-p',
+        'Bug Reports': 'https://github.com/nicholascar/connegp/issues',
+        'Source': 'https://github.com/nicholascar/connegp',
     },
     install_requires=install_requires,
+    setup_requires=['wheel', 'twine']
 )
 

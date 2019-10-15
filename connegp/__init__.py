@@ -17,7 +17,7 @@ class LinkHeaderParser:
     # https://github.com/psf/requests/blob/f5dacf84468ab7e0631cc61a3f1431a32e3e143c/requests/utils.py#L580
     def _parse(self, link_header):
         """Return a dict of parsed link headers proxies.
-        i.e. Link: <http:/.../front.jpeg>; rel=front; type="image/jpeg",<http://.../back.jpeg>; rel=back;type="image/jpeg"
+        i.e. Link: <http:/...>; rel=front; type="image/jpeg",<http://.../back.jpeg>; rel=back;type="image/jpeg"
         """
 
         links = []
@@ -29,8 +29,9 @@ class LinkHeaderParser:
             except ValueError:
                 url, params = val, ''
 
-            link = {}
-            link['uri'] = url.strip('<> "')
+            link = {
+                'uri': url.strip('<> "')
+            }
 
             for param in params.split(';'):
                 try:
@@ -66,14 +67,14 @@ class LinkHeaderParser:
 
 class AcceptProfileHeaderParser:
     def __init__(self, accept_profile_header):
-        self.accept_profiles = []
+        self.profiles = []
         self.valid = False
 
         self._parse(accept_profile_header)
         self._is_valid()
 
     def _parse(self, link_header):
-        """Return a dict of parsed link headers proxies.
+        """Return a dict of parsed link headers
         i.e. Link: <http:/.../front.jpeg>; q="0.9",<urn:one:two:three:y>; q=0.5
         """
 
@@ -84,12 +85,67 @@ class AcceptProfileHeaderParser:
                 uri, q = val, 'q=1'
 
             link = {
-                'uri': uri.strip('<> "'),
+                'profile': uri.strip('<> "'),
                 'q': float(q.split('=')[1])
             }
 
-            self.accept_profiles.append(link)
-        self.accept_profiles = sorted(self.accept_profiles, key=lambda k: k['q'], reverse=True)
+            self.profiles.append(link)
+        self.profiles = sorted(self.profiles, key=lambda k: k['q'], reverse=True)
 
     def _is_valid(self):
+        self.valid = True
+
+
+class ProfileQsaParser:
+    def __init__(self, profiles_qsa):
+        self.profiles = []
+        self.valid = False
+
+        self._parse(profiles_qsa)
+
+    def _parse(self, profiles_qsa):
+        """Return a dict of parsed _ proxies Query String Argument
+        i.e. _profile=<http://example.org/profile/x>; q="0.9",<urn:one:two:three:y>; q=0.5
+        """
+
+        # split on comma, but not if comma within < >
+        within = False
+        splits = []
+        for i, letter in enumerate(profiles_qsa):
+            if letter == '<':
+                within = True
+            elif letter == '>':
+                within = False
+            elif letter == ',' and within is False:
+                splits.append(i)
+            else:
+                pass
+
+        profiles = []
+        start = 0
+        for i, split in enumerate(splits):
+            profiles.append(profiles_qsa[start:split])
+            start = splits[i] + 1
+
+        profiles.append(profiles_qsa[start:])
+
+        for i, profile in enumerate(profiles):
+            # if the profile ID is a URI (HTTP URI or a URN) then it must be enclosed in <>
+            if 'http:' in profile or 'https:' in profile or 'urn:' in profile:
+                if not profile.startswith('<') and '>' not in profile:
+                    self.valid = False
+                    return None
+            try:
+                p, q = profile.split(';', 1)
+            except ValueError:
+                p, q = profile, 'q=1'
+
+            profile = {
+                'profile': profile,
+                'q': float(q.split('=')[1])
+            }
+
+            self.profiles.append(profile)
+        self.profiles = sorted(self.profiles, key=lambda k: k['q'], reverse=True)
+
         self.valid = True
