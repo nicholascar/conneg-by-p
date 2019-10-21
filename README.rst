@@ -2,6 +2,8 @@ Conneg by P
 ============
 This small library module assists with tasks related to `Content Negotiation by Profile <https://www.w3.org/TR/dx-prof-conneg/>`_, which is a `W3C Standard <https://www.w3.org/standards/>`_ about *how Internet clients may negotiate for content provided by servers based on data profiles to which the content conforms*.
 
+This module available via PyPI: https://pypi.org/project/connegp/
+
 Library Structure
 ------------------
 The library really only consists of a few classes:
